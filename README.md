@@ -1,2 +1,2 @@
-# python-airbnb-sdk
+# Python Airbnb SDK
 Python SDK for Airbnb unofficial API
