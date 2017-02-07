@@ -174,6 +174,69 @@ class AirbnbAPI(object):
         optional_params.update({"user_id": user_id})
         return self._session.get(self.API_URL + "/v2/listings", data=optional_params)
 
+    def create_message_thread(self,
+                              listing_id: int,
+                              number_of_guests: int,
+                              checkin_date: str,
+                              checkout_date: str,
+                              message: str,
+                              **optional_params) -> requests.models.Response:
+        """
+        Optional URL Parameters:
+
+        Key	        Sample Value	Description
+        locale	    en-US	        Desired lagnuage
+        currency	USD	            Currency for listings
+        :param listing_id:
+        :param number_of_guests:
+        :param checkin_date:        2018-04-01T00:00:00.000-0700
+        :param checkout_date:       2018-04-02T00:00:00.000-0700
+        :param message:
+        :return:
+        """
+        data = {
+            "listing_id": listing_id,
+            "number_of_guests": number_of_guests,
+            "checkin_date": checkin_date,
+            "checkout_date": checkout_date,
+            "message": message
+        }
+        data.update(optional_params)
+        return self._session.post(self.API_URL + "v1/threads/create", data=data)
+
+    def get_messages(self, **optional_params) -> requests.models.Response:
+        """Returns message threads, given an AirBnB access token (from authenticating with login endpoints).
+
+        Optional URL Parameters:
+
+        Key	                Sample Value	    Description
+        locale	            en-US	            Desired lagnuage
+        currency	        USD	                Desired currency
+        offset	            0	                Number of message threads to offset in search
+        items_per_page	    10	                Number of message threads to display at once
+        role	            guest	            Type of threads to retrieve. "guest", "host",
+                                                    or don't include this param for both
+
+        :param optional_params:
+        :return requests.models.Response:
+        """
+        return self._session.get(self.API_URL + "/v1/threads", data=optional_params)
+
+    def get_user_info(self, **optional_params):
+        """Get basic info about the logged-in user, such as name, picture, phone number, verifications, etc.
+
+        Optional URL Parameters:
+
+        Key	                Sample Value	        Description
+        locale	            en-US	                Desired lagnuage
+        currency	        USD	                    Desired currency
+        offset	            0	                    Number of message threads to offset in search
+        items_per_page	    10	                    Number of message threads to display at once
+        role	            guest	                Type of threads to retrieve. "guest", "host",
+                                                    or don't include this param for both
+        alert_types[]	    reservation_request	    Not sure...
+        """
+        return self._session.get(self.API_URL + "/v1/account/active", data=optional_params)
 
 if __name__ == '__main__':
     pass
