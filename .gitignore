@@ -90,3 +90,6 @@ ENV/
 
 # Pycharm files
 .idea
+
+# Credentials file
+credentials.json
