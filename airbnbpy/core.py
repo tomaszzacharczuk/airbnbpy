@@ -100,7 +100,10 @@ class AirbnbAPI(object):
         user_lng	            -122.42833333333333	                        Longitude search coordinate.
 
         """
-        return self._session.get(self.API_URL + "/v2/search_results/", data=optional_params)
+        if "location" in optional_params:
+            optional_params['location'] = optional_params['location'].replace(' ', '-')
+
+        return self._session.get(self.API_URL + "/v2/search_results/", params=optional_params)
 
     def view_listing_info(self, listing_id, **optional_params) -> requests.models.Response:
         """Returns detailed information about a listing, given its ID (e.g., found in the search endpoint reponse).
@@ -120,9 +123,9 @@ class AirbnbAPI(object):
 
         # API result format(just put this - it won't work without it)
         optional_params.update({"_format": "v1_legacy_for_p3"})
-        return self._session.get(self.API_URL + "/v2/listings/" + listing_id, data=optional_params)
+        return self._session.get(self.API_URL + "/v2/listings/" + str(listing_id), params=optional_params)
 
-    def get_reviews(self, listing_id: str, **optional_params) -> requests.models.Response:
+    def get_reviews(self, listing_id: int, **optional_params) -> requests.models.Response:
         """Returns reviews for a given listing.
 
 
@@ -142,9 +145,9 @@ class AirbnbAPI(object):
         :return requests.models.Response:
         """
         optional_params.update({"listing_id": listing_id, "role": "all"})
-        return self._session.get(self.API_URL + "/v2/reviews/", data=optional_params)
+        return self._session.get(self.API_URL + "/v2/reviews/", params=optional_params)
 
-    def view_user_info(self, user_id: int, **optional_params) -> requests.models.Response:
+    def view_user_info(self, user_id, **optional_params) -> requests.models.Response:
         """Returns detailed information about a user, given his/her/its ID
         (e.g., found in the view listing endpoint response).
 
@@ -154,10 +157,10 @@ class AirbnbAPI(object):
         locale	    en-US	            Desired lagnuage
         currency	USD	                Currency for listings.
         """
-        optional_params.update({"user_id": user_id, "_format": "v1_legacy_show"})
-        return self._session.get(self.API_URL + "/v2/users", data=optional_params)
+        optional_params.update({"_format": "v1_legacy_show"})
+        return self._session.get(self.API_URL + "/v2/users/" + str(user_id), params=optional_params)
 
-    def get_host_listings(self, user_id: int, **optional_params) -> requests.models.Response:
+    def get_host_listings(self, user_id, **optional_params) -> requests.models.Response:
         """Returns information about all the listings a user hosts.
 
         Optional URL Parameters:
@@ -236,7 +239,4 @@ class AirbnbAPI(object):
                                                     or don't include this param for both
         alert_types[]	    reservation_request	    Not sure...
         """
-        return self._session.get(self.API_URL + "/v1/account/active", data=optional_params)
-
-if __name__ == '__main__':
-    pass
+        return self._session.get(self.API_URL + "/v1/account/active", params=optional_params)
