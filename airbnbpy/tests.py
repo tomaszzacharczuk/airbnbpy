@@ -45,7 +45,10 @@ class TestAirbnbAPI:
         assert result_krakow.status_code == 200
         self.listing_id = result_krakow.json()['search_results'][0]['listing']['id']
         assert isinstance(self.listing_id, Number)
-        assert self.air_api.view_listing_info(self.listing_id).status_code == 200
+        self.listing_info = self.air_api.view_listing_info(self.listing_id)
+        assert self.listing_info.status_code == 200
+        with open("listing_info.txt", mode="w") as f:
+            f.write(self.listing_info.text)
         assert self.air_api.view_listing_info(self.listing_id, locale="pl", number_of_guests=2).status_code == 200
         assert self.air_api.view_listing_info(self.listing_id, locale="en-US", number_of_guests=1).status_code == 200
 
